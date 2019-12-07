@@ -19,9 +19,9 @@ var message = {
 };
 
 var gpsdataObj = {
-  status = "reset",
-  data = "",
-  lastUpdated = new Date()
+  status : "reset",
+  data : "",
+  lastUpdated : new Date()
 }
 
 async function publishGetDataRequest(req, res) {
