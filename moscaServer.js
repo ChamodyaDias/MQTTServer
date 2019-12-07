@@ -40,6 +40,7 @@ async function publishGetDataRequest(req, res) {
       }
       else if (packet.topic == "data/notready") {
         console.log("data Not ready from client : " + client.id);
+        resolve({data : 'not ready'});
       }
       else if (packet.topic == "send/gpsdata") {
         console.log('Published', client.id);
