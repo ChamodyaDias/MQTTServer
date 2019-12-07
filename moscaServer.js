@@ -18,9 +18,48 @@ var message = {
   retain: false // or true
 };
 
-function publishGetDataRequest(){
+var gpsdataObj = {
+  status = "reset",
+  data = "",
+  lastUpdated = new Date()
+}
+
+async function publishGetDataRequest(req, res) {
   moscaServer.publish(message, function () {
-    // console.log('done!');
+    await new Promise((resolve, reject) => {
+      setTimeout(() => {
+        reject("timeout");
+      }, 30000);
+
+      // fired when a message is published
+      moscaServer.on('published', function (packet, client) {
+        if (packet.topic == "client/connected") {
+          console.log(client.id);
+        }
+        else if (packet.topic == "data/notready") {
+          console.log("data Not ready from client : " + client.id);
+        }
+        else if (packet.topic == "send/gpsdata") {
+          console.log('Published', client.id);
+          const cent = Buffer.from(packet.payload);
+          var data = decoder.write(cent)
+          var jsonData = JSON.parse(data);
+          console.log(jsonData);
+          gpsdataObj.data = jsonData;
+          gpsdataObj.lastUpdated = new Date()
+          gpsdataObj.status = "updated";
+          console.log("data updated");
+          resolve(gpsdataObj);
+        }
+
+      });
+    }).then(obj =>{
+      console.log('done!');
+      res.send(obj);    
+    }).catch(err =>{
+      console.log('error!');
+      res.send({'error' : err});
+    })
   })
 }
 
@@ -34,22 +73,27 @@ moscaServer.on('clientConnected', function(client){
 })
 
 
-// fired when a message is published
-moscaServer.on('published', function (packet, client) {
-  if(packet.topic == "client/connected"){
-    console.log(client.id);
-  }
-  else if(packet.topic == "data/notready"){
-    console.log("data Not ready from client : " + client.id);
-  }
-  else if(packet.topic == "send/gpsdata"){
-    console.log('Published', client.id);
-    const cent = Buffer.from(packet.payload);
-    var data = decoder.write(cent)
-    console.log(data);
-  }
+// // fired when a message is published
+// moscaServer.on('published', function (packet, client) {
+//   if(packet.topic == "client/connected"){
+//     console.log(client.id);
+//   }
+//   else if(packet.topic == "data/notready"){
+//     console.log("data Not ready from client : " + client.id);
+//   }
+//   else if(packet.topic == "send/gpsdata"){
+//     console.log('Published', client.id);
+//     const cent = Buffer.from(packet.payload);
+//     var data = decoder.write(cent)
+//     var jsonData = JSON.parse(data);
+//     console.log(jsonData);
+//     gpsdataObj.data = jsonData;
+//     gpsdataObj.lastUpdated = new Date()
+//     gpsdataObj.status = "updated";
+//     console.log("data updated");
+//   }
 
-});
+// });
 
 moscaServer.on('ready', setup);
 
