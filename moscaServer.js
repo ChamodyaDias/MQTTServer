@@ -74,29 +74,6 @@ moscaServer.on('clientConnected', function (client) {
   console.log("Client connected :" + client.id);
 })
 
-
-// // fired when a message is published
-// moscaServer.on('published', function (packet, client) {
-//   if(packet.topic == "client/connected"){
-//     console.log(client.id);
-//   }
-//   else if(packet.topic == "data/notready"){
-//     console.log("data Not ready from client : " + client.id);
-//   }
-//   else if(packet.topic == "send/gpsdata"){
-//     console.log('Published', client.id);
-//     const cent = Buffer.from(packet.payload);
-//     var data = decoder.write(cent)
-//     var jsonData = JSON.parse(data);
-//     console.log(jsonData);
-//     gpsdataObj.data = jsonData;
-//     gpsdataObj.lastUpdated = new Date()
-//     gpsdataObj.status = "updated";
-//     console.log("data updated");
-//   }
-
-// });
-
 moscaServer.on('ready', setup);
 
 // fired when the mqtt server is ready

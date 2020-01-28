@@ -28,15 +28,3 @@ server.listen(app.get('port'), function () {
   console.log('Express server listening on port ' + app.get('port'))
 })
 
-
-
-// var mqtt = require('mqtt')
-// var client  = mqtt.connect('mqtt://192.168.8.105')
-
-// client.on('connect', function () {
-//   setInterval(function() {
-//   client.publish('get/gpsdata', 'send');
-//   console.log('Message Sent');
-//   }, 10000);
-//   });
-
